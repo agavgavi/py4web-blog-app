@@ -1,0 +1,21 @@
+[[extend 'base.html']]
+
+[[block content]]
+    <article class="media content-section">
+        <img class='rounded-circle article-img' src="[[=post.get('author_icon')]]">
+        <div class="media-body">
+        <div class="article-metadata">
+            <a class="mr-2" href="[[=URL('user', post.get('author').id)]]">[[=post.get('author').username]]</a>
+            <small class="text-muted">[[=post.get('date_posted').strftime("%B %d, %Y")]]</small>
+            [[if post.get('author') == globals().get('user').get('id'):]]
+                <div>
+                    <a class='btn btn-secondary btn-sm mt-1 mb-1' href="[[=URL('post', post.id, 'update')]]"> Update</a>
+                    <a class='btn btn-danger btn-sm mt-1 mb-1' href="[[=URL('post', post.id, 'delete')]]"> Delete</a>
+                </div>
+            [[pass]]
+        </div>
+        <h2 class="article-title">[[=post.get('title')]]</h2>
+        <p class="article-content">[[=post.get('content')]]</p>
+        </div>
+    </article>
+[[end]]

@@ -1,0 +1,279 @@
+<div>
+  <div v-if="user === null && page=='register'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Join Today
+      </legend>
+    </fieldset>
+    <div class="form-group" v-if="use_username">
+      <label for="exampleInputUsername1">Username*</label>
+      <input class="form-control" v-model="form.username" type="text" id="exampleInputUsername1" required>
+      <span class="text-danger small" v-if="errors.username">{{errors.username}}</span>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputEmail1">Email*</label>
+      <input class="form-control" v-model="form.email" type="email" id="exampleInputEmail1">
+      <span class="text-danger small"  v-if="errors.email">{{errors.email}}</span>
+    </div>
+    <div class="form-group">
+      <label for="exampleInputPassword1">Password*</label>
+      <input class="form-control" v-model="form.password" type="password" id="exampleInputPassword1">
+      <span class="text-danger small"  v-if="errors.password">{{errors.password}}</span>
+    </div>
+    <div class="form-group" >
+      <label for="exampleInputPassword2">Password confirmation*</label>
+      <input class="form-control" v-bind:class="{'is-invalid':form.password2 && form.password!=form.password2}" v-model="form.password2" type="password" id="exampleInputPassword2">
+      <span class="text-danger small"  v-if="errors.password2">{{errors.password2}}</span>
+    </div>
+    <div>
+      <label for="exampleFullName1">Full Name*</label>
+    </div>
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <input class="form-control" v-model="form.first_name" type="text" id="exampleFullName1" placeholder="First name">
+        <span class="text-danger small"  v-if="errors.first_name">{{errors.first_name}}</span>
+      </div>
+      <div class="form-group col-md-6">
+        <input class="form-control" v-model="form.last_name" type="text" placeholder="Last name">
+        <span class="text-danger small"  v-if="errors.last_name">{{errors.last_name}}</span>
+      </div>
+    </div>
+    <div class="form-group" v-for="field in fields" v-if="field._added">      
+      <label v-if="field.type=='boolean'" class="form-control">
+        <input v-model="form[field.name]" type="checkbox">
+        <span v-text="field.name"></span>
+      </label>
+      <input v-if="field.type=='integer' || field.type=='float'" class="form-control" 
+             v-model="form[field.name]" type="number" v-bind:placeholder="field.name">
+      <input v-else class="form-control"
+             v-model="form[field.name]" type="text" v-bind:placeholder="field.name">
+      <span class="text-danger small"  v-if="errors[field.name]">{{errors[field.name]}}</span>
+    </div>
+    <div class="form-group">
+      <button class="btn btn-outline-info" v-on:click="submit_register()">Sign Up</button>
+    </div>
+    <div class='border-top pt-3'>
+      <small class='text-muted'>
+        Already Have An Account? <a class='text-primary ml-2' v-on:click="go('login')">Sign In</a>
+      </small>
+    </div>
+  </div>
+  <div v-else-if="page=='404'">
+    <center>
+      <fieldset class='form-group'>
+        <legend class='border-bottom mb-4'>
+          404 - Page non available
+        </legend>
+      </fieldset> 
+      <button v-if="user === null" class="btn btn-outline-info" v-on:click="go('login')">Login</button>
+      <button v-else class="btn btn-outline-info" v-on:click="go('logout')">Logout</button>
+    </center>    
+  </div>
+  <div v-else-if="page=='403'">
+    <center>
+      <fieldset class='form-group'>
+        <legend class='border-bottom mb-4'>
+          403 - User not authorized
+        </legend>
+      </fieldset>
+      <button v-if="user === null" class="btn btn-primary" v-on:click="go('login')">Login</button>
+      <button v-else class="btn btn-primary" v-on:click="go('logout')">Logout</button>
+    </center>    
+  </div>
+  <div v-else-if="user === null && page=='login'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Log In
+      </legend>
+    </fieldset>  
+    <div class="form-group" style="text-align:center;margin:20px"> 
+      <a v-if="plugins.indexOf('Google')>=0" 
+         class="btn btn-primary" 
+         v-bind:href="'../auth/plugin/oauth2google/login?next='+next">Login with Google</a>
+      <a v-if="plugins.indexOf('oauth2facebook')>=0"
+         class="btn btn-primary" 
+         v-bind:href="'../auth/plugin/oauth2facebook/login?next='+next">Login with Facebook</a>
+      <a v-if="plugins.indexOf('oauth2okta')>=0"
+         class="btn btn-primary" 
+         v-bind:href="'../auth/plugin/oauth2okta/login?next='+next">Login with Okta</a>
+    </div>
+    <div v-if="!plugins||plugins.indexOf('local')>=0">
+      <div class="form-group">
+        <label for="exampleInputUsername2">Username or Email</label>
+        <input class="form-control" v-model="form.email" type="email" id="exampleInputUsername2">
+        <span class="text-danger small" v-if="errors.email">{{errors.email}}</span>
+      </div>
+      <div class="form-group">
+        <label for="exampleInputPassword3">Password</label>
+        <input class="form-control" v-model="form.password" type="password" id="exampleInputPassword3">
+        <span class="text-danger small" v-if="errors.password">{{errors.password}}</span>
+      </div>
+      <div class="form-group">
+        <button class="btn btn-outline-info" v-on:click="submit_login()">Login</button>
+      </div>
+      <div class='border-top pt-3'>
+        <small class='text-muted'>
+          Need An Account? <a class='text-primary ml-2' v-on:click="go('register')">Sign Up Now</a>
+        </small>
+      </div>
+      <div>
+        <small class='text-muted'>
+          Forgot Password? <a class='text-primary ml-2' v-on:click="go('request_reset_password')">Reset Here</a>
+        </small>
+      </div>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='request_reset_password'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Request Reset Password
+      </legend>
+    </fieldset>
+    <div class="form-group">
+      <label for="exampleInputEmail2">Email*</label>
+      <div class="input-group mb-3">
+        <input class="form-control" v-model="form.email" type="email" id="exampleInputEmail2">
+        <div class="input-group-append">
+          <button class="btn btn-primary" v-on:click="submit_request_reset_password()" type="button">Request</button>
+        </div>
+      </div>
+      <span class="text-danger small" v-if="errors.email">{{errors.email}}</span>
+    </div>
+    <div class='border-top pt-3'>
+      <small class='text-muted'>
+        Need An Account?<a class='text-primary ml-2' v-on:click="go('register')">Sign Up Now</a> or<a class='text-primary ml-2' v-on:click="go('login')">Login</a>
+      </small>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='reset_password'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Reset Password
+      </legend>
+    </fieldset>
+    <div class="form-group">
+      <input class="form-control" v-model="form.new_password" type="password" placeholder="new password">
+      <span class="text-danger small" v-if="errors.new_password">{{errors.new_password}}</span>      
+    </div>
+    <div class="form-group">
+      <input class="form-control" v-model="form.new_password2" type="password" placeholder="new password (again)">
+      <span class="text-danger small" v-if="errors.new_password2">{{errors.new_password2}}</span>
+    </div>
+    <div class="form-group" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="submit_reset_password()">Send Request</button>
+      <button class="btn btn-primary" v-on:click="go('login')">Login</button>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='change_password'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Change Password
+      </legend>
+    </fieldset>
+    <div class="form-group">
+      <input class="form-control" v-model="form.old_password" type="password" placeholder="current password">
+      <span class="text-danger small" v-if="errors.old_password">{{errors.old_password}}</span>
+    </div>
+    <div class="form-group">
+      <input class="form-control" v-model="form.new_password" type="password" placeholder="new password">
+      <span class="text-danger small" v-if="errors.new_password">{{errors.new_password}}</span>
+    </div>
+    <div class="form-group">
+      <input class="form-control" v-model="form.new_password2" type="password" placeholder="new password (again)">
+      <span class="text-danger small" v-if="errors.new_password2">{{errors.new_password2}}</span>
+    </div>
+    <div class="form-group" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="submit_change_password()">Change Password</button>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='change_email'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Change Email
+      </legend>
+    </fieldset>
+    <div class="form-group">
+      <input class="form-control" v-model="form.password" type="password" placeholder="password">
+      <span class="text-danger small" v-if="errors.password">{{errors.password}}</span>
+    </div>
+    <div class="form-group">
+      <input class="form-control" v-model="form.new_email" type="email" placeholder="new email">
+      <<span class="text-danger small" v-if="errors.new_email">{{errors.new_email}}</span>
+    </div>
+    <div class="form-group">
+      <input class="form-control" v-model="form.new_email2" type="email" placeholder="new email (again)">
+      <span class="text-danger small" v-if="errors.new_email2">{{errors.new_email2}}</span>
+    </div>
+    <div class="container" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="submit_change_email()">Change Email</button>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='edit_profile'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Profile
+      </legend>
+    </fieldset>
+    <div class="form-group">
+      <input class="form-control" v-model="form.first_name" type="text" placeholder="first name">
+      <span class="text-danger small" v-if="errors.first_name">{{errors.first_name}}</span>
+    </div>
+    <div class="form-group">
+      <input class="form-control" v-model="form.last_name" type="text" placeholder="last name">
+      <span class="text-danger small" v-if="errors.last_name">{{errors.last_name}}</span>
+    </div>
+    <div class="control" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="submit_profile()">Save Profile</button>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='registered'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Registered
+      </legend>
+    </fieldset>
+    <div class="container" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="go('login')">Go to login</button>
+    </div>
+  </div>
+  <div v-else-if="user === null && page=='request_sent'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Request Sent
+      </legend>
+    </fieldset>
+    <div class="container" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="go('login')">Go to login</button>
+    </div>
+  </div>
+  <div v-else-if="page=='email_verified'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Email Verified
+      </legend>
+    </fieldset>
+    <div class="container" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="go('login')">Go to login</button>
+    </div>
+  </div>
+  <div v-else-if="page=='token_expired'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Token Expired
+      </legend>
+    </fieldset>
+    <div class="container" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="go('login')">Go to login</button>
+    </div>
+  </div>
+  <div v-else-if="page=='logout'">
+    <fieldset class='form-group'>
+      <legend class='border-bottom mb-4'>
+        Logged Out
+      </legend>
+    </fieldset>
+    <div class="container" style="text-align:center">
+      <button class="btn btn-primary" v-on:click="go('login')">Go to login</button>
+    </div>
+  </div>
+</div>

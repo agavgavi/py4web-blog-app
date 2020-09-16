@@ -1,0 +1,23 @@
+# Ignore macOS DS_Store files
+.DS_Store
+
+# Python & server files that should not be tracked
+__pycache__
+celerybeat-schedule.db
+
+# Private files that we do not ever want to share
+settings_private.py
+
+# ignore pycharm
+.idea
+/.project
+
+# ignore vscode
+*.code-workspace
+.vscode
+# private folder for gcs
+private
+
+# ignore all user profile pics besides the required default one
+static/images/*
+!static/images/default.jpg

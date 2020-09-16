@@ -1,0 +1,14 @@
+[[extend 'base.html']]
+
+[[block content]]
+    <div class='content-section'>
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Delete Post</legend>
+            <h2>Are you sure you want to delete the post "[[=post.title]]"</h2>
+        </fieldset>
+        <fieldset class="form-group">
+            <a class='btn btn-outline-danger' href="[[=URL('post/delete', post.id)]]">Yes, Delete</a>
+            <a class='btn btn-outline-secondary' href="[[=URL('post', post.id)]]">Cancel</a>
+        </fieldset>
+    </div>
+[[end]]

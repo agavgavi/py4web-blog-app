@@ -1,0 +1,17 @@
+[[extend "base.html"]]
+[[block content]]
+    <div class="content-section">
+        <div class="media">
+            <img class="rounded-circle account-img" src="[[=icon]]">
+            <div class="media-body">
+                <h2 class="account-heading">[[=globals().get('user').get('username')]]</h2>
+                <p class="text-secondary">[[=globals().get('user').get('email')]]</p>
+            </div>
+        </div>
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Profile Info</legend>
+        </fieldset>
+        [[=aform]]
+    </div>
+[[end]]
+
