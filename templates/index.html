@@ -1,6 +1,13 @@
 [[extend 'base.html']]
 
 [[block content]]
+    [[if not posts:]]
+    <article class="media content-section">
+        <div class="media-body">
+            <p>There doesn't seem to be any posts made yet. Why don't you sign up and make one?</p>
+        </div>
+    </article>
+    [[pass]]
     [[for post in posts:]]
         <article class="media content-section">
             <img class='rounded-circle article-img' src="images/[[=post.profile.image]]">

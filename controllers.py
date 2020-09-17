@@ -48,7 +48,7 @@ from PIL import Image
 
 @unauthenticated('index', 'index.html')
 def index():
-    posts = db().select(db.post.ALL, db.profile.ALL, left=db.post.on(
+    posts = db(db.post).select(left=db.post.on(
         db.post.author == db.profile.user), orderby=~db.post.date_posted)
     return dict(posts=posts)
 
@@ -81,10 +81,10 @@ def userPosts(user_id=None):
     if author == None:
         redirect(URL('index'))
 
-    posts = db(db.post.author == user_id).select(db.post.ALL, db.profile.ALL, left=db.post.on(
+    posts = db(db.post.author == user_id).select(left=db.post.on(
         db.post.author == db.profile.user),
         orderby=~db.post.date_posted)
-    return dict(posts=posts)
+    return dict(username=author.username,  posts=posts)
 
 # The about page gives information about the project and it's possible future
 
