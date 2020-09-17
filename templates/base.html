@@ -60,10 +60,13 @@
                   <h3>Our Sidebar</h3>
                   <p class='text-muted'>You can put any information here you'd like.
                     <ul class="list-group">
-                      <li class="list-group-item list-group-item-light">Latest Posts</li>
-                      <li class="list-group-item list-group-item-light">Announcements</li>
-                      <li class="list-group-item list-group-item-light">Calendars</li>
-                      <li class="list-group-item list-group-item-light">etc</li>
+                      [[if globals().get('user'):]]
+                        <a class="list-group-item list-group-item-light" href="[[=URL('user', user.get('id'))]]">My Posts</a>
+                        <a class="list-group-item list-group-item-light" href="[[=URL('profile')]]">My Profile</a>
+                      [[pass]]
+                      <a class="list-group-item list-group-item-light" href="[[=URL('index')]]">Latest Posts</a>
+                      <a class="list-group-item list-group-item-light" href="[[=URL('about')]]">About This Blog</a>
+                      <li class="list-group-item list-group-item-light">etc...</li>
                     </ul>
                   </p>
                 </div>
