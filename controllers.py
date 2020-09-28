@@ -194,24 +194,31 @@ def profile():
                  deletable=False,
                  formstyle=FormStyleBootstrap4)
     if aform.accepted:
-        user_db = db.auth_user[user['id']]
-        user_db.update_record(username=aform.vars['username'],
-                              email=aform.vars['email'],
-                              first_name=aform.vars['first_name'],
-                              last_name=aform.vars['last_name'])
-        if aform.vars['icon'] == None and aform.vars['icon'] != profile.image:
-            temp_image = profile.image
-            if temp_image == 'default.jpg':
-                redirect(URL('profile'))
-            cleanup_image(temp_image)
-            profile.update_record(image='default.jpg')
+        # Update the auth user
+        db.auth_user[user['id']].update_record(username=aform.vars['username'],
+                                               email=aform.vars['email'],
+                                               first_name=aform.vars['first_name'],
+                                               last_name=aform.vars['last_name'])
 
-        if aform.vars['icon'] and aform.vars['icon'] != profile.image:
+        # The icon we want to update our profile will always have a default of default.jpg
+        update_icon = 'default.jpg'
+
+        if not aform.vars['icon'] and profile.image == update_icon:
+            # We can't delete the default image so we just redirect back to the page.
+            redirect(URL('profile'))
+
+        if aform.vars['icon']:
+            # If we are setting it equal to a new icon, we set icon to that file name
+            update_icon = aform.vars['icon']
+
+        if update_icon != profile.image:
+            # If the new icon (which can be default.jpg) isn't the same icon as before, remove the old one and update
             if profile.image != 'default.jpg':
                 cleanup_image(profile.image)
-            profile.update_record(image=aform.vars['icon'])
-            resize_image(profile.image)
+                resize_image(update_icon)
+            profile.update_record(image=update_icon)
 
+        # Once done with everything (Or after doing nothing because the icons are the same), return to the profile page
         redirect(URL('profile'))
     return dict(icon=icon, aform=aform)
 
