@@ -24,12 +24,9 @@ The path follows the bottlepy syntax.
 session, db, T, auth, and tempates are examples of Fixtures.
 Warning: Fixtures MUST be declared with @action.uses({fixtures}) else your app will result in undefined behavior
 """
-from py4web import action, request, redirect, URL, Field, HTTP
+from py4web import request, redirect, URL, Field, HTTP
 from py4web.utils.form import Form, FormStyleBootstrap4
-from py4web.utils.grid import Grid
-from .common import db, authenticated, unauthenticated, flash, auth, session
-
-from .models import get_download_url
+from .common import db, authenticated, unauthenticated, auth, session
 from . import settings
 
 import os
