@@ -27,24 +27,34 @@ def get_download_url(picture):
 
 
 def get_user():
-    return auth.current_user.get('id') if auth.current_user else None
+    return auth.current_user.get("id") if auth.current_user else None
 
 
-db.define_table('post',
-                Field('title', 'string', requires=IS_NOT_EMPTY()),
-                Field('content', 'text', requires=IS_NOT_EMPTY()),
-                Field('date_posted', 'datetime', default=get_time,
-                      readable=False, writable=False),
-                Field('author', 'reference auth_user',
-                      default=get_user, readable=False, writable=False),
-                )
+db.define_table(
+    "post",
+    Field("title", "string", requires=IS_NOT_EMPTY()),
+    Field("content", "text", requires=IS_NOT_EMPTY()),
+    Field("date_posted", "datetime", default=get_time, readable=False, writable=False),
+    Field(
+        "author",
+        "reference auth_user",
+        default=get_user,
+        readable=False,
+        writable=False,
+    ),
+)
 
-db.define_table('profile',
-                Field('user', 'reference auth_user',
-                      readable=False, writable=False),
-                Field('image', 'upload', default='default.jpg',
-                      uploadfolder=settings.UPLOAD_PATH, download_url=get_download_url),
-                )
+db.define_table(
+    "profile",
+    Field("user", "reference auth_user", readable=False, writable=False),
+    Field(
+        "image",
+        "upload",
+        default="default.jpg",
+        uploadfolder=settings.UPLOAD_PATH,
+        download_url=get_download_url, label="Profile Picture",
+    ),
+)
 # We do not want these fields to appear in forms by default.
 db.post.id.readable = False
 db.post.id.writable = False
